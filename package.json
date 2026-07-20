@@ -1,0 +1,13 @@
+{
+  "name": "wuzi-gomoku",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local Gomoku game with human-vs-human and human-vs-AI modes.",
+  "scripts": {
+    "package:release": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-release.ps1",
+    "publish:launcher": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/publish-launcher.ps1",
+    "start": "node scripts/dev-server.mjs",
+    "test": "node --test tests/gomoku.test.js"
+  }
+}

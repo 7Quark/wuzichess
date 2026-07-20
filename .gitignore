@@ -1,0 +1,10 @@
+.appdata/
+.dotnet/
+.nuget/
+.runtime/
+.userprofile/
+dist/WuZiLauncher/.runtime/
+
+*.log
+Thumbs.db
+Desktop.ini
