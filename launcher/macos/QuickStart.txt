@@ -1,12 +1,13 @@
 五子棋 macOS 便携版
 
 推荐使用：
-1. 解压 WuZiLauncher-macos-v1.0.0.tar.gz
+1. 解压 WuZiLauncher-macos-v1.1.0.tar.gz
 2. 双击 WuZiLauncher.app
-3. 如果首次运行被系统拦截，请在“系统设置 -> 隐私与安全性”中允许执行
-4. 关闭时双击 Stop-WuZi.command
+3. 首次运行如果被系统拦截，请在“系统设置 -> 隐私与安全性”中允许执行
+4. 关闭时直接关闭应用窗口，或双击 Stop-WuZi.command
 
-兼容说明：
-- 也可以使用 Start-WuZi.command 启动
-- 需要 Node.js，或 Python 3
-- 运行日志保存在 .runtime-macos 目录
+说明：
+- 当前版本是单窗口桌面应用，不再依赖浏览器界面
+- 也可以通过 Start-WuZi.command 启动
+- 需要 Node.js 或 Python 3
+- 运行日志保存在 ~/Library/Application Support/WuZiGomoku

@@ -4,6 +4,8 @@ $projectRoot = Split-Path $PSScriptRoot -Parent
 $outputDir = Join-Path $projectRoot "dist\WuZiLauncher"
 $runtimeDir = Join-Path $outputDir ".runtime"
 $sourceFile = Join-Path $projectRoot "launcher\netfx\WuZiLauncher.cs"
+$assemblyInfoFile = Join-Path $projectRoot "launcher\netfx\AssemblyInfo.cs"
+$iconFile = Join-Path $projectRoot "assets\icons\wuzilauncher.ico"
 $compiler = "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
 $outputFile = Join-Path $outputDir "WuZiLauncher.exe"
 $indexFile = Join-Path $projectRoot "index.html"
@@ -12,10 +14,14 @@ $stylesFile = Join-Path $projectRoot "src\web\styles.css"
 $aiFile = Join-Path $projectRoot "assets\scripts\core\gomoku-ai.js"
 $engineFile = Join-Path $projectRoot "assets\scripts\core\gomoku-engine.js"
 $rulesFile = Join-Path $projectRoot "assets\scripts\core\gomoku-rules.js"
+$quickStartCnTemplate = Join-Path $projectRoot "launcher\windows\QuickStart.txt"
+$quickStartEnTemplate = Join-Path $projectRoot "launcher\windows\QuickStart_EN.txt"
 
 if (-not (Test-Path $compiler)) {
   throw "csc.exe not found: $compiler"
 }
+
+& (Join-Path $projectRoot "scripts\generate-icons.ps1")
 
 New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 New-Item -ItemType Directory -Force -Path $runtimeDir | Out-Null
@@ -26,6 +32,7 @@ Get-ChildItem $runtimeDir -Force -ErrorAction SilentlyContinue | Remove-Item -Re
   /target:winexe `
   /optimize+ `
   /platform:x64 `
+  "/win32icon:$iconFile" `
   "/out:$outputFile" `
   /reference:System.dll `
   /reference:System.Core.dll `
@@ -38,7 +45,8 @@ Get-ChildItem $runtimeDir -Force -ErrorAction SilentlyContinue | Remove-Item -Re
   "/resource:$aiFile,WuZiLauncher.WebAssets.assets.scripts.core.gomoku-ai.js" `
   "/resource:$engineFile,WuZiLauncher.WebAssets.assets.scripts.core.gomoku-engine.js" `
   "/resource:$rulesFile,WuZiLauncher.WebAssets.assets.scripts.core.gomoku-rules.js" `
-  $sourceFile
+  $sourceFile `
+  $assemblyInfoFile
 
 if ($LASTEXITCODE -ne 0) {
   throw "Launcher build failed."
@@ -46,31 +54,8 @@ if ($LASTEXITCODE -ne 0) {
 
 $startBat = "@echo off`r`nstart `"`" `"%~dp0WuZiLauncher.exe`"`r`n"
 $stopBat = "@echo off`r`n`"%~dp0WuZiLauncher.exe`" --stop`r`n"
-$quickStartCn = @'
-五子棋 Windows 便携版
-
-1. 双击 Start-WuZi.bat 或 WuZiLauncher.exe
-2. 启动器会自动打开浏览器
-3. 关闭时双击 Stop-WuZi.bat
-
-说明：
-- 不需要安装 Node.js
-- 不需要安装 Python
-- 运行日志保存在 .runtime 目录
-'@
-
-$quickStartEn = @'
-WuZi Gomoku Windows Portable
-
-1. Double-click Start-WuZi.bat or WuZiLauncher.exe
-2. The launcher will open your browser automatically
-3. Double-click Stop-WuZi.bat to close the local server
-
-Notes:
-- No Node.js installation required
-- No Python installation required
-- Runtime logs are stored in the .runtime folder
-'@
+$quickStartCn = [System.IO.File]::ReadAllText($quickStartCnTemplate, [System.Text.Encoding]::UTF8)
+$quickStartEn = [System.IO.File]::ReadAllText($quickStartEnTemplate, [System.Text.Encoding]::UTF8)
 
 [System.IO.File]::WriteAllText((Join-Path $outputDir "Start-WuZi.bat"), $startBat, [System.Text.Encoding]::ASCII)
 [System.IO.File]::WriteAllText((Join-Path $outputDir "Stop-WuZi.bat"), $stopBat, [System.Text.Encoding]::ASCII)

@@ -6,6 +6,7 @@ $appBundleDir = Join-Path $outputDir "WuZiLauncher.app"
 $appContentsDir = Join-Path $appBundleDir "Contents"
 $appMacOsDir = Join-Path $appContentsDir "MacOS"
 $appResourcesDir = Join-Path $appContentsDir "Resources\app"
+$appResourceRootDir = Join-Path $appContentsDir "Resources"
 $releaseDir = Join-Path $projectRoot "release"
 $packageJsonPath = Join-Path $projectRoot "package.json"
 $package = Get-Content $packageJsonPath -Raw | ConvertFrom-Json
@@ -33,6 +34,8 @@ New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 New-Item -ItemType Directory -Force -Path $appMacOsDir | Out-Null
 New-Item -ItemType Directory -Force -Path $appResourcesDir | Out-Null
 
+& (Join-Path $projectRoot "scripts\generate-icons.ps1")
+
 $filesToCopy = @(
   "index.html",
   "package.json",
@@ -41,6 +44,7 @@ $filesToCopy = @(
   "assets\scripts\core\gomoku-ai.js",
   "assets\scripts\core\gomoku-engine.js",
   "assets\scripts\core\gomoku-rules.js",
+  "launcher\macos\WuZiLauncher.jxa",
   "scripts\dev-server.mjs",
   "scripts\launch-wuzi-macos.sh",
   "scripts\stop-wuzi-macos.sh"
@@ -57,6 +61,7 @@ foreach ($relativePath in $filesToCopy) {
 
 Write-LfFile -Path (Join-Path $appContentsDir "Info.plist") -Content ([System.IO.File]::ReadAllText((Join-Path $projectRoot "launcher\macos\Info.plist")))
 Write-LfFile -Path (Join-Path $appMacOsDir "WuZiLauncher") -Content ([System.IO.File]::ReadAllText((Join-Path $projectRoot "launcher\macos\WuZiLauncher")))
+[System.IO.File]::Copy((Join-Path $projectRoot "assets\icons\wuzilauncher.icns"), (Join-Path $appResourceRootDir "WuZiLauncher.icns"), $true)
 Write-LfFile -Path (Join-Path $outputDir "Start-WuZi.command") -Content ([System.IO.File]::ReadAllText((Join-Path $projectRoot "launcher\macos\Start-WuZi.command")))
 Write-LfFile -Path (Join-Path $outputDir "Stop-WuZi.command") -Content ([System.IO.File]::ReadAllText((Join-Path $projectRoot "launcher\macos\Stop-WuZi.command")))
 Write-LfFile -Path (Join-Path $outputDir "QuickStart.txt") -Content ([System.IO.File]::ReadAllText((Join-Path $projectRoot "launcher\macos\QuickStart.txt")))

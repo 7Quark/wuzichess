@@ -1,11 +1,13 @@
 {
   "name": "wuzi-gomoku",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "Local Gomoku game with human-vs-human and human-vs-AI modes.",
   "scripts": {
+    "generate:icons": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-icons.ps1",
     "package:macos": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/publish-macos-release.ps1",
+    "package:macos:dmg": "bash scripts/build-macos-dmg.sh",
     "package:release": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-release.ps1",
     "publish:launcher": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/publish-launcher.ps1",
     "start": "node scripts/dev-server.mjs",

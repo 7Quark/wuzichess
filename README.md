@@ -2,22 +2,20 @@
 
 [English README](./README_EN.md)
 
-一个纯本地、可离线运行的五子棋应用，支持人人对战与人机对战，并提供 Windows / macOS 两套启动方案。
+一个纯本地、可离线运行的五子棋应用，支持人人对战与人机对战，并提供 Windows 与 macOS 两套分发方案。
 
-## 项目简介
-
-本项目基于五子棋开发需求实现，当前已经完成：
+## 当前状态
 
 - 本地单机运行，无需联网
 - 15 x 15 标准棋盘
 - 人人对战
 - 人机对战
-- 胜负判定
-- 和棋判定
+- 胜负判定、和棋判定
 - 悔棋、重置、退出
-- Windows `exe` 启动器
-- macOS 脚本启动包
-- 可直接分发的 ZIP 发布包
+- Windows 原生 `exe` 启动器
+- macOS 单窗口 `.app` 桌面版
+- Windows / macOS 发布包
+- 中英文说明文档
 
 ## 主要功能
 
@@ -36,65 +34,107 @@
 - 识别活二、活三、冲四等常见棋型
 - 在进攻与防守之间做基础权重判断
 
-### 本地一键启动
+## 启动方式
 
-项目提供两类启动方式：
+### Windows
 
-- 开发版：脚本启动
-- 发布版：`WuZiLauncher.exe` 启动
-
-发布版不依赖 `Node.js` 或 `Python`，适合直接发给用户使用。
-
-## 面向用户的使用方式
-
-### 直接运行 exe
-
-双击下面任意一个文件即可：
+双击以下任意文件即可启动：
 
 - `dist/WuZiLauncher/WuZiLauncher.exe`
 - `dist/WuZiLauncher/Start-WuZi.bat`
 - 根目录 `启动五子棋.bat`
 
-程序启动后会：
+特点：
 
-- 自动选择可用本地端口
-- 在后台启动本地服务
-- 自动打开浏览器进入游戏界面
+- 不依赖 `Node.js`
+- 不依赖 `Python`
+- 自动启动本地服务
+- 自动打开浏览器进入游戏
 
 关闭方式：
 
-- 双击 `dist/WuZiLauncher/Stop-WuZi.bat`
-- 或双击根目录 `关闭五子棋.bat`
+- `dist/WuZiLauncher/Stop-WuZi.bat`
+- 根目录 `关闭五子棋.bat`
 
-### 使用发布压缩包
+### macOS
 
-发布包位置：
-
-```text
-release/WuZiLauncher-win-x64-v1.0.0.zip
-release/WuZiLauncher-macos-v1.0.0.zip
-release/WuZiLauncher-macos-v1.0.0.tar.gz
-```
-
-解压后直接运行：
+推荐使用发布包：
 
 ```text
-WuZiLauncher.exe
+release/WuZiLauncher-macos-v1.1.0.tar.gz
 ```
 
-macOS 推荐优先使用：
+解压后直接双击：
 
 ```text
-WuZiLauncher-macos-v1.0.0.tar.gz
+WuZiLauncher.app
 ```
 
-原因：
+特点：
 
-- 更适合保留 `.app` 与脚本执行权限
-- 解压后可直接双击 `WuZiLauncher.app`
-- 运行日志会写入 `~/Library/Application Support/WuZiGomoku`
+- 现在是单窗口桌面应用，不再依赖浏览器窗口
+- 使用系统 `WebKit` 承载游戏界面
+- 运行时会在本机启动 `127.0.0.1` 本地服务
+- 需要 `Node.js` 或 `Python 3`
+- 日志写入 `~/Library/Application Support/WuZiGomoku`
 
+如果首次运行被系统拦截，请到“系统设置 -> 隐私与安全性”中允许执行。
 
+## 发布包
+
+当前发布产物：
+
+```text
+release/WuZiLauncher-win-x64-v1.1.0.zip
+release/WuZiLauncher-macos-v1.1.0.zip
+release/WuZiLauncher-macos-v1.1.0.tar.gz
+```
+
+推荐：
+
+- Windows 用户使用 `WuZiLauncher-win-x64-v1.1.0.zip`
+- macOS 用户优先使用 `WuZiLauncher-macos-v1.1.0.tar.gz`
+
+`tar.gz` 更适合保留 `.app` 结构与执行权限。
+
+## 开发运行
+
+### 运行 Web 开发版
+
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd start
+```
+
+访问：
+
+```text
+http://127.0.0.1:8765/index.html
+```
+
+### 运行测试
+
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd test
+```
+
+## 打包
+
+### 生成图标
+
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd run generate:icons
+```
+
+输出目录：
+
+```text
+assets/icons/
+```
+
+### 重新生成 Windows 启动器
 
 ```powershell
 cd D:\CodeSpaces\WuZi
@@ -107,118 +147,78 @@ npm.cmd run publish:launcher
 dist/WuZiLauncher/
 ```
 
-包含文件：
+### 重新生成发布包
 
-- `WuZiLauncher.exe`
-- `Start-WuZi.bat`
-- `Stop-WuZi.bat`
-- `QuickStart.txt`
-- `QuickStart_EN.txt`
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd run package:release
+npm.cmd run package:macos
+```
 
+输出目录：
 
+```text
+release/
+```
 
+### 在 macOS 上生成 DMG
+
+在真实 macOS 环境执行：
+
+```bash
+bash scripts/build-macos-dmg.sh
+```
+
+输出文件：
+
+```text
+release/WuZiLauncher-macos-v1.1.0.dmg
+```
+
+## 签名与公证
+
+macOS 签名与公证说明见：
+
+- [docs/macos-signing-notarization.md](./docs/macos-signing-notarization.md)
+- [docs/macos-signing-notarization.en.md](./docs/macos-signing-notarization.en.md)
 
 ## 技术结构
 
-### 前端界面
+### 前端
 
-- `index.html`：页面入口
-- `src/web/app.js`：界面交互、模式切换、棋盘渲染
-- `src/web/styles.css`：样式定义
+- `index.html`
+- `src/web/app.js`
+- `src/web/styles.css`
 
 ### 核心逻辑
 
-- `assets/scripts/core/gomoku-rules.js`：棋盘规则、合法落子、胜负判定
-- `assets/scripts/core/gomoku-engine.js`：对局状态机、模式控制、悔棋逻辑
-- `assets/scripts/core/gomoku-ai.js`：AI 选点与攻防评分
+- `assets/scripts/core/gomoku-rules.js`
+- `assets/scripts/core/gomoku-engine.js`
+- `assets/scripts/core/gomoku-ai.js`
 
 ### Windows 启动器
 
-- `launcher/netfx/WuZiLauncher.cs`：Windows `exe` 启动器源码
-- `scripts/publish-launcher.ps1`：构建启动器
-- `scripts/package-release.ps1`：生成 ZIP 发布包
+- `launcher/netfx/WuZiLauncher.cs`
+- `launcher/netfx/AssemblyInfo.cs`
+- `scripts/publish-launcher.ps1`
 
-### Cocos 预留入口
+### macOS 启动器
 
-- `assets/scripts/GomokuGame.ts`
-- `assets/scripts/FairyGuiShell.ts`
+- `launcher/macos/WuZiLauncher`
+- `launcher/macos/WuZiLauncher.jxa`
+- `launcher/macos/Info.plist`
+- `scripts/publish-macos-release.ps1`
+- `scripts/build-macos-dmg.sh`
 
-这部分用于后续接入 `Cocos Creator 3.7.3` 和 `FairyGUI`。当前项目主体已经可独立运行，不依赖 Cocos 编辑器。
+### 图标资源
 
-## 目录结构
-
-```text
-assets/
-  scripts/
-    core/
-      gomoku-ai.js
-      gomoku-engine.js
-      gomoku-rules.js
-    FairyGuiShell.ts
-    GomokuGame.ts
-dist/
-  WuZiLauncher/
-    WuZiLauncher.exe
-    Start-WuZi.bat
-    Stop-WuZi.bat
-    QuickStart.txt
-    QuickStart_EN.txt
-launcher/
-  netfx/
-    WuZiLauncher.cs
-release/
-  WuZiLauncher-macos-v1.0.0.zip
-  WuZiLauncher-macos-v1.0.0.tar.gz
-  WuZiLauncher-win-x64-v1.0.0.zip
-scripts/
-  dev-server.mjs
-  launch-wuzi.ps1
-  stop-wuzi.ps1
-  publish-launcher.ps1
-  package-release.ps1
-  spawn-server.cjs
-src/
-  web/
-    app.js
-    styles.css
-tests/
-  gomoku.test.js
-index.html
-package.json
-README.md
-README_EN.md
-启动五子棋.bat
-关闭五子棋.bat
-```
-
-## 运行要求
-
-### 发布版
-
-- Windows 系统
-- macOS
-- 浏览器可用
-
-不需要安装：
-
-- Windows 版：不需要 `Node.js` / `Python`
-- macOS 版：需要 `Node.js` 或 `Python 3`
-
-### 开发版
-
-- Windows
-- Node.js
+- `scripts/generate-icons.ps1`
+- `assets/icons/wuzilauncher.ico`
+- `assets/icons/wuzilauncher.icns`
 
 ## 说明
 
-1. 当前最适合 Windows 用户的版本是 `dist/WuZiLauncher/WuZiLauncher.exe`
-2. 当前最适合 macOS 用户的版本是 `release/WuZiLauncher-macos-v1.0.0.tar.gz`
-3. 当前最适合开发调试的版本是 `npm.cmd start`
-4. 项目中保留了 Cocos 侧入口代码，但当前交付核心是本地 Web + 启动器方案
-
-## 后续可扩展方向
-
-- 增强 AI 搜索深度和难度分级
-- 增加单窗口桌面版，而不是浏览器打开
-- 增加自定义应用图标和安装包
-- 接入完整 Cocos Creator 场景和 FairyGUI 资源
+1. Windows 版仍然是浏览器承载界面，但已具备正式图标和版本信息。
+2. macOS 版已经升级为单窗口桌面应用。
+3. DMG 需要在真实 macOS 环境打包。
+4. macOS 签名和公证必须在真实 macOS 环境完成。

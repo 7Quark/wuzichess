@@ -1,0 +1,178 @@
+ObjC.import('Cocoa');
+ObjC.import('WebKit');
+
+function unwrap(value) {
+  return value ? ObjC.unwrap(value) : null;
+}
+
+function readEnv(name) {
+  return unwrap($.NSProcessInfo.processInfo.environment.objectForKey($(name)));
+}
+
+function createDelegate() {
+  ObjC.registerSubclass({
+    name: 'WuZiLauncherAppDelegate',
+    protocols: ['NSApplicationDelegate'],
+    methods: {
+      'applicationShouldTerminateAfterLastWindowClosed:': {
+        types: ['B', ['@', ':', '@']],
+        implementation: function() {
+          return true;
+        }
+      }
+    }
+  });
+
+  return $.WuZiLauncherAppDelegate.alloc.init;
+}
+
+function runTask(launchPath, args, extraEnv) {
+  const task = $.NSTask.alloc.init;
+  task.launchPath = $(launchPath);
+  task.arguments = $(args);
+
+  if (extraEnv) {
+    const env = $.NSMutableDictionary.alloc.initWithDictionary($.NSProcessInfo.processInfo.environment);
+    Object.keys(extraEnv).forEach((key) => {
+      env.setObject_forKey($(String(extraEnv[key])), $(key));
+    });
+    task.environment = env;
+  }
+
+  const outPipe = $.NSPipe.pipe;
+  const errPipe = $.NSPipe.pipe;
+  task.standardOutput = outPipe;
+  task.standardError = errPipe;
+  task.launch;
+  task.waitUntilExit;
+
+  const stdout = unwrap($.NSString.alloc.initWithDataEncoding(outPipe.fileHandleForReading.readDataToEndOfFile, $.NSUTF8StringEncoding)) || '';
+  const stderr = unwrap($.NSString.alloc.initWithDataEncoding(errPipe.fileHandleForReading.readDataToEndOfFile, $.NSUTF8StringEncoding)) || '';
+
+  return {
+    code: task.terminationStatus,
+    stdout,
+    stderr
+  };
+}
+
+function parseKeyValueOutput(output) {
+  const result = {};
+  output.split('\n').forEach((line) => {
+    const index = line.indexOf('=');
+    if (index > 0) {
+      result[line.slice(0, index).trim()] = line.slice(index + 1).trim();
+    }
+  });
+  return result;
+}
+
+function stopServer(serverPid, stateFile) {
+  if (serverPid) {
+    const pid = parseInt(serverPid, 10);
+    if (!Number.isNaN(pid)) {
+      try {
+        $.kill(pid, 15);
+      } catch (error) {
+      }
+    }
+  }
+
+  if (stateFile) {
+    const manager = $.NSFileManager.defaultManager;
+    const statePath = $(stateFile);
+    if (manager.fileExistsAtPath(statePath)) {
+      manager.removeItemAtPathError(statePath, null);
+    }
+  }
+}
+
+function showError(message, details) {
+  const app = $.NSApplication.sharedApplication;
+  app.setActivationPolicy($.NSApplicationActivationPolicyRegular);
+  const alert = $.NSAlert.alloc.init;
+  alert.messageText = $('WuZi Gomoku failed to start');
+  alert.informativeText = $(details ? message + '\n\n' + details : message);
+  alert.alertStyle = $.NSAlertStyleCritical;
+  alert.runModal;
+}
+
+function ensureWindow(url) {
+  const app = $.NSApplication.sharedApplication;
+  app.setActivationPolicy($.NSApplicationActivationPolicyRegular);
+
+  const delegate = createDelegate();
+  app.delegate = delegate;
+
+  const styleMask =
+    $.NSWindowStyleMaskTitled |
+    $.NSWindowStyleMaskClosable |
+    $.NSWindowStyleMaskMiniaturizable |
+    $.NSWindowStyleMaskResizable;
+  const rect = $.NSMakeRect(0, 0, 1040, 820);
+  const window = $.NSWindow.alloc.initWithContentRectStyleMaskBackingDefer(
+    rect,
+    styleMask,
+    $.NSBackingStoreBuffered,
+    false
+  );
+
+  window.title = $('WuZi Gomoku');
+  window.setMinSize($.NSMakeSize(860, 680));
+  window.center;
+
+  const configuration = $.WKWebViewConfiguration.alloc.init;
+  const webView = $.WKWebView.alloc.initWithFrameConfiguration(window.contentView.bounds, configuration);
+  webView.setAutoresizingMask($.NSViewWidthSizable | $.NSViewHeightSizable);
+  window.contentView.addSubview(webView);
+
+  const request = $.NSURLRequest.requestWithURL($.NSURL.URLWithString($(url)));
+  webView.loadRequest(request);
+
+  window.makeKeyAndOrderFront(null);
+  app.activateIgnoringOtherApps(true);
+  app.run;
+}
+
+function main() {
+  const appRoot = readEnv('WUZI_APP_ROOT');
+  const appPid = readEnv('WUZI_APP_PID') || String($.NSProcessInfo.processInfo.processIdentifier);
+
+  if (!appRoot) {
+    showError('Missing application root.', '');
+    return 1;
+  }
+
+  const launchScript = appRoot + '/scripts/launch-wuzi-macos.sh';
+  const launchResult = runTask(
+    '/bin/bash',
+    [launchScript, '--no-open', '--print-state'],
+    { WUZI_APP_PID: appPid }
+  );
+
+  if (launchResult.code !== 0) {
+    showError('Unable to start the local service.', launchResult.stderr || launchResult.stdout);
+    return 1;
+  }
+
+  const state = parseKeyValueOutput(launchResult.stdout);
+  const serverPid = state.PID || '';
+  const url = state.URL || '';
+  const stateFile = state.STATE_FILE || '';
+
+  if (!url) {
+    stopServer(serverPid, stateFile);
+    showError('The launcher did not return a valid local URL.', launchResult.stdout);
+    return 1;
+  }
+
+  try {
+    ensureWindow(url);
+  } finally {
+    stopServer(serverPid, stateFile);
+  }
+
+  return 0;
+}
+
+$.exit(main());

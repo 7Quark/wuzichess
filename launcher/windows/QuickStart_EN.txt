@@ -1,4 +1,4 @@
-﻿WuZi Gomoku Windows Portable
+WuZi Gomoku Windows Portable
 
 1. Double-click Start-WuZi.bat or WuZiLauncher.exe
 2. The launcher will open your browser automatically

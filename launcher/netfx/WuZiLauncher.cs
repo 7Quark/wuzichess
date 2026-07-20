@@ -105,7 +105,7 @@ namespace WuZiLauncher
             RuntimeState.WriteLog("State saved.");
 
             this.trayIcon = new NotifyIcon();
-            this.trayIcon.Icon = SystemIcons.Application;
+            this.trayIcon.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath) ?? SystemIcons.Application;
             this.trayIcon.Text = "WuZi Gomoku";
             this.trayIcon.Visible = true;
             this.trayIcon.ContextMenuStrip = BuildMenu();

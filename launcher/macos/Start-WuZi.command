@@ -2,4 +2,4 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-"$SCRIPT_DIR/WuZiLauncher.app/Contents/MacOS/WuZiLauncher"
+open "$SCRIPT_DIR/WuZiLauncher.app"

@@ -1,12 +1,13 @@
 WuZi Gomoku macOS Portable
 
 Recommended usage:
-1. Extract WuZiLauncher-macos-v1.0.0.tar.gz
+1. Extract WuZiLauncher-macos-v1.1.0.tar.gz
 2. Double-click WuZiLauncher.app
-3. If macOS blocks the first run, allow it in System Settings -> Privacy & Security
-4. Double-click Stop-WuZi.command to stop the local server
+3. If macOS blocks the first launch, allow it in System Settings -> Privacy & Security
+4. Close the app window directly, or double-click Stop-WuZi.command
 
-Compatibility notes:
-- You can also launch via Start-WuZi.command
+Notes:
+- This build is now a single-window desktop app instead of a browser launcher
+- You can also launch it with Start-WuZi.command
 - Requires Node.js or Python 3
-- Runtime logs are stored in the .runtime-macos folder
+- Runtime logs are stored in ~/Library/Application Support/WuZiGomoku

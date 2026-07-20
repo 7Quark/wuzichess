@@ -10,6 +10,16 @@ if [[ ! -f "$STATE_FILE" ]]; then
 fi
 
 PID="$(sed -n '1p' "$STATE_FILE" 2>/dev/null || true)"
+APP_PID="$(sed -n '4p' "$STATE_FILE" 2>/dev/null || true)"
+
+if [[ -n "${APP_PID:-}" ]] && kill -0 "$APP_PID" >/dev/null 2>&1; then
+  kill "$APP_PID" >/dev/null 2>&1 || true
+  sleep 0.5
+  if kill -0 "$APP_PID" >/dev/null 2>&1; then
+    kill -9 "$APP_PID" >/dev/null 2>&1 || true
+  fi
+fi
+
 if [[ -n "${PID:-}" ]] && kill -0 "$PID" >/dev/null 2>&1; then
   kill "$PID" >/dev/null 2>&1 || true
   sleep 0.5

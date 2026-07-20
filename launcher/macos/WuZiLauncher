@@ -3,5 +3,6 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 APP_ROOT="$(cd "$SCRIPT_DIR/../Resources/app" && pwd)"
-
-bash "$APP_ROOT/scripts/launch-wuzi-macos.sh"
+export WUZI_APP_ROOT="$APP_ROOT"
+export WUZI_APP_PID="$$"
+exec /usr/bin/osascript -l JavaScript "$APP_ROOT/launcher/macos/WuZiLauncher.jxa"

@@ -9,6 +9,19 @@ LOG_OUT_FILE="$RUNTIME_DIR/server.out.log"
 LOG_ERR_FILE="$RUNTIME_DIR/server.err.log"
 PORT_RANGE_START=8765
 PORT_RANGE_END=8775
+OPEN_BROWSER=1
+PRINT_STATE=0
+
+for arg in "$@"; do
+  case "$arg" in
+    --no-open)
+      OPEN_BROWSER=0
+      ;;
+    --print-state)
+      PRINT_STATE=1
+      ;;
+  esac
+done
 
 mkdir -p "$RUNTIME_DIR"
 
@@ -29,16 +42,46 @@ open_browser() {
   fi
 }
 
+print_state() {
+  local pid="$1"
+  local port="$2"
+  local url="$3"
+
+  echo "PID=$pid"
+  echo "PORT=$port"
+  echo "URL=$url"
+  echo "STATE_FILE=$STATE_FILE"
+  if [[ -n "${WUZI_APP_PID:-}" ]]; then
+    echo "APP_PID=${WUZI_APP_PID:-}"
+  fi
+}
+
 if [[ -f "$STATE_FILE" ]]; then
   existing_pid="$(sed -n '1p' "$STATE_FILE" 2>/dev/null || true)"
+  existing_port="$(sed -n '2p' "$STATE_FILE" 2>/dev/null || true)"
   existing_url="$(sed -n '3p' "$STATE_FILE" 2>/dev/null || true)"
+  existing_app_pid="$(sed -n '4p' "$STATE_FILE" 2>/dev/null || true)"
+
   if [[ -n "${existing_pid:-}" ]] && kill -0 "$existing_pid" >/dev/null 2>&1; then
     if [[ -n "${existing_url:-}" ]]; then
       echo "[WuZi] Existing instance detected: $existing_url"
-      open_browser "$existing_url"
+      if [[ "$OPEN_BROWSER" -eq 1 ]]; then
+        open_browser "$existing_url"
+      fi
+      if [[ "$PRINT_STATE" -eq 1 ]]; then
+        print_state "$existing_pid" "$existing_port" "$existing_url"
+        if [[ -n "${existing_app_pid:-}" ]]; then
+          echo "APP_PID=$existing_app_pid"
+        fi
+      fi
       exit 0
     fi
   fi
+
+  if [[ -n "${existing_app_pid:-}" ]] && kill -0 "$existing_app_pid" >/dev/null 2>&1; then
+    kill "$existing_app_pid" >/dev/null 2>&1 || true
+  fi
+
   rm -f "$STATE_FILE"
 fi
 
@@ -67,9 +110,15 @@ for _ in $(seq 1 20); do
       echo "$PID"
       echo "$PORT"
       echo "$URL"
+      echo "${WUZI_APP_PID:-}"
     } >"$STATE_FILE"
     echo "[WuZi] Server ready: $URL"
-    open_browser "$URL"
+    if [[ "$OPEN_BROWSER" -eq 1 ]]; then
+      open_browser "$URL"
+    fi
+    if [[ "$PRINT_STATE" -eq 1 ]]; then
+      print_state "$PID" "$PORT" "$URL"
+    fi
     exit 0
   fi
   sleep 0.4

@@ -2,32 +2,30 @@
 
 [中文说明](./README.md)
 
-A fully local, offline-capable Gomoku application with both Human vs Human and Human vs AI modes, plus Windows and macOS launch options.
+A fully local, offline-capable Gomoku application with Human vs Human and Human vs AI modes, plus Windows and macOS distribution options.
 
-## Overview
+## Current Status
 
-This project implements the Gomoku development requirements and currently includes:
-
-- Fully local single-player deployment, no network required
+- Fully local, offline runtime
 - Standard 15 x 15 board
 - Human vs Human mode
 - Human vs AI mode
-- Win detection
-- Draw detection
+- Win and draw detection
 - Undo, reset, and exit
-- Windows `exe` launcher
-- macOS script-based package
-- Ready-to-distribute ZIP release package
+- Native Windows `exe` launcher
+- Single-window macOS `.app` desktop build
+- Windows and macOS release packages
+- Chinese and English documentation
 
 ## Main Features
 
 ### Human vs Human
 
-Two players take turns on the same device. Black moves first. The system automatically determines wins and draws.
+Two players take turns on the same device. Black moves first. The game automatically determines wins and draws.
 
 ### Human vs AI
 
-The player uses black and moves first. The AI uses white. The AI is not random and includes basic offensive and defensive logic.
+The player uses black and moves first. The AI uses white. The AI is not random and includes basic offensive and defensive behavior.
 
 Current AI behavior includes:
 
@@ -36,182 +34,191 @@ Current AI behavior includes:
 - Recognizing common patterns such as open two, open three, and rush four
 - Balancing attack and defense with a basic scoring model
 
-### One-Click Local Launch
+## Launch Modes
 
-The project supports two launch modes:
+### Windows
 
-- Development mode: script-based launcher
-- Release mode: `WuZiLauncher.exe`
-
-The release build does not require `Node.js` or `Python`, which makes it suitable for direct end-user distribution.
-
-## End-User Usage
-
-### Run the exe directly
-
-Double-click any of the following:
+Start the app by double-clicking any of the following:
 
 - `dist/WuZiLauncher/WuZiLauncher.exe`
 - `dist/WuZiLauncher/Start-WuZi.bat`
 - Root-level `启动五子棋.bat`
 
-After startup, the launcher will:
+Characteristics:
 
-- Automatically choose an available local port
-- Start the local service in the background
-- Open the game in the browser automatically
+- No `Node.js` required
+- No `Python` required
+- Starts the local service automatically
+- Opens the game in the browser automatically
 
 To stop it:
 
-- Double-click `dist/WuZiLauncher/Stop-WuZi.bat`
-- Or double-click the root-level `关闭五子棋.bat`
+- `dist/WuZiLauncher/Stop-WuZi.bat`
+- Root-level `关闭五子棋.bat`
 
-### Use the release ZIP package
+### macOS
 
-Release package:
-
-```text
-release/WuZiLauncher-win-x64-v1.0.0.zip
-release/WuZiLauncher-macos-v1.0.0.zip
-release/WuZiLauncher-macos-v1.0.0.tar.gz
-```
-
-After extraction, run:
+Recommended package:
 
 ```text
-WuZiLauncher.exe
+release/WuZiLauncher-macos-v1.1.0.tar.gz
 ```
 
-For macOS, the preferred package is:
+After extraction, double-click:
 
 ```text
-WuZiLauncher-macos-v1.0.0.tar.gz
+WuZiLauncher.app
 ```
 
-Reason:
+Characteristics:
 
-- Better suited for preserving `.app` and script execute permissions
-- After extraction, users can directly double-click `WuZiLauncher.app`
-- Runtime logs are stored in `~/Library/Application Support/WuZiGomoku`
+- Now runs as a single-window desktop app instead of a browser launcher
+- Uses system `WebKit` to host the game UI
+- Starts a local `127.0.0.1` service at runtime
+- Requires `Node.js` or `Python 3`
+- Writes runtime logs to `~/Library/Application Support/WuZiGomoku`
 
+If the first launch is blocked, allow it in System Settings -> Privacy & Security.
 
-Generated files:
+## Release Packages
 
-- `WuZiLauncher.exe`
-- `Start-WuZi.bat`
-- `Stop-WuZi.bat`
-- `QuickStart.txt`
-- `QuickStart_EN.txt`
+Current release outputs:
 
+```text
+release/WuZiLauncher-win-x64-v1.1.0.zip
+release/WuZiLauncher-macos-v1.1.0.zip
+release/WuZiLauncher-macos-v1.1.0.tar.gz
+```
 
+Recommended:
 
-Output directory:
+- Windows users: `WuZiLauncher-win-x64-v1.1.0.zip`
+- macOS users: `WuZiLauncher-macos-v1.1.0.tar.gz`
+
+`tar.gz` preserves the `.app` structure and executable permissions more reliably.
+
+## Development
+
+### Run the web development build
+
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd start
+```
+
+Open:
+
+```text
+http://127.0.0.1:8765/index.html
+```
+
+### Run tests
+
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd test
+```
+
+## Packaging
+
+### Generate icons
+
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd run generate:icons
+```
+
+Output:
+
+```text
+assets/icons/
+```
+
+### Rebuild the Windows launcher
+
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd run publish:launcher
+```
+
+Output:
+
+```text
+dist/WuZiLauncher/
+```
+
+### Rebuild release packages
+
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd run package:release
+npm.cmd run package:macos
+```
+
+Output:
 
 ```text
 release/
 ```
+
+### Build a DMG on macOS
+
+Run this on a real macOS machine:
+
+```bash
+bash scripts/build-macos-dmg.sh
+```
+
+Output:
+
+```text
+release/WuZiLauncher-macos-v1.1.0.dmg
+```
+
+## Signing and Notarization
+
+See:
+
+- [docs/macos-signing-notarization.md](./docs/macos-signing-notarization.md)
+- [docs/macos-signing-notarization.en.md](./docs/macos-signing-notarization.en.md)
 
 ## Technical Structure
 
 ### Frontend
 
-- `index.html`: page entry
-- `src/web/app.js`: UI interaction, mode switching, board rendering
-- `src/web/styles.css`: styling
+- `index.html`
+- `src/web/app.js`
+- `src/web/styles.css`
 
 ### Core Logic
 
-- `assets/scripts/core/gomoku-rules.js`: board rules, move validation, win detection
-- `assets/scripts/core/gomoku-engine.js`: game state machine, mode control, undo logic
-- `assets/scripts/core/gomoku-ai.js`: AI move selection and attack/defense scoring
+- `assets/scripts/core/gomoku-rules.js`
+- `assets/scripts/core/gomoku-engine.js`
+- `assets/scripts/core/gomoku-ai.js`
 
 ### Windows Launcher
 
-- `launcher/netfx/WuZiLauncher.cs`: Windows `exe` launcher source
-- `scripts/publish-launcher.ps1`: build script for the launcher
-- `scripts/package-release.ps1`: ZIP packaging script
+- `launcher/netfx/WuZiLauncher.cs`
+- `launcher/netfx/AssemblyInfo.cs`
+- `scripts/publish-launcher.ps1`
 
-### Reserved Cocos Entry Points
+### macOS Launcher
 
-- `assets/scripts/GomokuGame.ts`
-- `assets/scripts/FairyGuiShell.ts`
+- `launcher/macos/WuZiLauncher`
+- `launcher/macos/WuZiLauncher.jxa`
+- `launcher/macos/Info.plist`
+- `scripts/publish-macos-release.ps1`
+- `scripts/build-macos-dmg.sh`
 
-These are reserved for future `Cocos Creator 3.7.3` and `FairyGUI` integration. The current application already runs independently and does not depend on the Cocos editor.
+### Icon Assets
 
-## Directory Structure
-
-```text
-assets/
-  scripts/
-    core/
-      gomoku-ai.js
-      gomoku-engine.js
-      gomoku-rules.js
-    FairyGuiShell.ts
-    GomokuGame.ts
-dist/
-  WuZiLauncher/
-    WuZiLauncher.exe
-    Start-WuZi.bat
-    Stop-WuZi.bat
-    QuickStart.txt
-    QuickStart_EN.txt
-launcher/
-  netfx/
-    WuZiLauncher.cs
-release/
-  WuZiLauncher-macos-v1.0.0.zip
-  WuZiLauncher-macos-v1.0.0.tar.gz
-  WuZiLauncher-win-x64-v1.0.0.zip
-scripts/
-  dev-server.mjs
-  launch-wuzi.ps1
-  stop-wuzi.ps1
-  publish-launcher.ps1
-  package-release.ps1
-  spawn-server.cjs
-src/
-  web/
-    app.js
-    styles.css
-tests/
-  gomoku.test.js
-index.html
-package.json
-README.md
-README_EN.md
-启动五子棋.bat
-关闭五子棋.bat
-```
-
-## Runtime Requirements
-
-### Release Version
-
-- Windows
-- macOS
-- A working browser
-
-No need to install:
-
-- Windows release: no `Node.js` or `Python`
-- macOS release: requires `Node.js` or `Python 3`
-
-### Development Version
-
-- Windows
-- Node.js
+- `scripts/generate-icons.ps1`
+- `assets/icons/wuzilauncher.ico`
+- `assets/icons/wuzilauncher.icns`
 
 ## Notes
 
-1. The recommended build for Windows users is `dist/WuZiLauncher/WuZiLauncher.exe`
-2. The recommended build for macOS users is `release/WuZiLauncher-macos-v1.0.0.tar.gz`
-3. The recommended build for development and debugging is `npm.cmd start`
-4. The repository still contains Cocos entry-point code, but the current delivered product is based on local Web runtime plus launcher-based distribution
-
-## Possible Future Enhancements
-
-- Deeper AI search and difficulty levels
-- A single-window desktop build instead of browser-based launch
-- Custom app icon and installer package
-- Full Cocos Creator scene and FairyGUI resource integration
+1. The Windows build still uses the browser as the UI container, but now includes a formal icon and version metadata.
+2. The macOS build has been upgraded to a single-window desktop app.
+3. DMG packaging must be done on a real macOS environment.
+4. macOS signing and notarization must be completed on a real macOS environment.
