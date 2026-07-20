@@ -2,7 +2,7 @@
 
 [English README](./README_EN.md)
 
-一个纯本地、可离线运行的五子棋应用，支持人人对战与人机对战，并提供 Windows 一键启动版本。
+一个纯本地、可离线运行的五子棋应用，支持人人对战与人机对战，并提供 Windows / macOS 两套启动方案。
 
 ## 项目简介
 
@@ -16,6 +16,7 @@
 - 和棋判定
 - 悔棋、重置、退出
 - Windows `exe` 启动器
+- macOS 脚本启动包
 - 可直接分发的 ZIP 发布包
 
 ## 主要功能
@@ -71,6 +72,7 @@
 
 ```text
 release/WuZiLauncher-win-x64-v1.0.0.zip
+release/WuZiLauncher-macos-v1.0.0.zip
 ```
 
 解压后直接运行：
@@ -136,6 +138,7 @@ dist/WuZiLauncher/
 ```powershell
 cd D:\CodeSpaces\WuZi
 npm.cmd run package:release
+npm.cmd run package:macos
 ```
 
 输出目录：
@@ -193,6 +196,7 @@ launcher/
   netfx/
     WuZiLauncher.cs
 release/
+  WuZiLauncher-macos-v1.0.0.zip
   WuZiLauncher-win-x64-v1.0.0.zip
 scripts/
   dev-server.mjs
@@ -220,12 +224,13 @@ README_EN.md
 ### 发布版
 
 - Windows 系统
+- macOS
 - 浏览器可用
 
 不需要安装：
 
-- `Node.js`
-- `Python`
+- Windows 版：不需要 `Node.js` / `Python`
+- macOS 版：需要 `Node.js` 或 `Python 3`
 
 ### 开发版
 
@@ -234,9 +239,10 @@ README_EN.md
 
 ## 说明
 
-1. 当前最适合普通用户的版本是 `dist/WuZiLauncher/WuZiLauncher.exe`
-2. 当前最适合开发调试的版本是 `npm.cmd start`
-3. 项目中保留了 Cocos 侧入口代码，但当前交付核心是本地 Web + Windows 启动器方案
+1. 当前最适合 Windows 用户的版本是 `dist/WuZiLauncher/WuZiLauncher.exe`
+2. 当前最适合 macOS 用户的版本是 `release/WuZiLauncher-macos-v1.0.0.zip`
+3. 当前最适合开发调试的版本是 `npm.cmd start`
+4. 项目中保留了 Cocos 侧入口代码，但当前交付核心是本地 Web + 启动器方案
 
 ## 后续可扩展方向
 

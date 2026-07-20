@@ -2,8 +2,10 @@
 .dotnet/
 .nuget/
 .runtime/
+.runtime-macos/
 .userprofile/
 dist/WuZiLauncher/.runtime/
+dist/WuZiLauncher-macos/.runtime-macos/
 
 *.log
 Thumbs.db

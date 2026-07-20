@@ -2,7 +2,7 @@
 
 [中文说明](./README.md)
 
-A fully local, offline-capable Gomoku application with both Human vs Human and Human vs AI modes, plus a one-click Windows launcher.
+A fully local, offline-capable Gomoku application with both Human vs Human and Human vs AI modes, plus Windows and macOS launch options.
 
 ## Overview
 
@@ -16,6 +16,7 @@ This project implements the Gomoku development requirements and currently includ
 - Draw detection
 - Undo, reset, and exit
 - Windows `exe` launcher
+- macOS script-based package
 - Ready-to-distribute ZIP release package
 
 ## Main Features
@@ -71,6 +72,7 @@ Release package:
 
 ```text
 release/WuZiLauncher-win-x64-v1.0.0.zip
+release/WuZiLauncher-macos-v1.0.0.zip
 ```
 
 After extraction, run:
@@ -136,6 +138,7 @@ Generated files:
 ```powershell
 cd D:\CodeSpaces\WuZi
 npm.cmd run package:release
+npm.cmd run package:macos
 ```
 
 Output directory:
@@ -193,6 +196,7 @@ launcher/
   netfx/
     WuZiLauncher.cs
 release/
+  WuZiLauncher-macos-v1.0.0.zip
   WuZiLauncher-win-x64-v1.0.0.zip
 scripts/
   dev-server.mjs
@@ -220,12 +224,13 @@ README_EN.md
 ### Release Version
 
 - Windows
+- macOS
 - A working browser
 
 No need to install:
 
-- `Node.js`
-- `Python`
+- Windows release: no `Node.js` or `Python`
+- macOS release: requires `Node.js` or `Python 3`
 
 ### Development Version
 
@@ -234,9 +239,10 @@ No need to install:
 
 ## Notes
 
-1. The recommended build for end users is `dist/WuZiLauncher/WuZiLauncher.exe`
-2. The recommended build for development and debugging is `npm.cmd start`
-3. The repository still contains Cocos entry-point code, but the current delivered product is based on local Web runtime plus the Windows launcher
+1. The recommended build for Windows users is `dist/WuZiLauncher/WuZiLauncher.exe`
+2. The recommended build for macOS users is `release/WuZiLauncher-macos-v1.0.0.zip`
+3. The recommended build for development and debugging is `npm.cmd start`
+4. The repository still contains Cocos entry-point code, but the current delivered product is based on local Web runtime plus launcher-based distribution
 
 ## Possible Future Enhancements
 

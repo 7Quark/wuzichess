@@ -1,0 +1,10 @@
+﻿WuZi Gomoku macOS Portable
+
+1. Double-click Start-WuZi.command
+2. If macOS blocks the first run, allow it in System Settings -> Privacy & Security
+3. The launcher will open your browser automatically
+4. Double-click Stop-WuZi.command to stop the local server
+
+Notes:
+- Requires Node.js or Python 3
+- Runtime logs are stored in the .runtime-macos folder
