@@ -94,38 +94,7 @@ WuZiLauncher-macos-v1.0.0.tar.gz
 - 解压后可直接双击 `WuZiLauncher.app`
 - 运行日志会写入 `~/Library/Application Support/WuZiGomoku`
 
-## 面向开发者的运行方式
 
-### 运行 Web 开发版
-
-```powershell
-cd D:\CodeSpaces\WuZi
-npm.cmd start
-```
-
-启动后访问：
-
-```text
-http://127.0.0.1:8765/index.html
-```
-
-### 运行脚本版启动器
-
-```powershell
-cd D:\CodeSpaces\WuZi
-powershell -ExecutionPolicy Bypass -File .\scripts\launch-wuzi.ps1
-```
-
-### 运行自动化测试
-
-```powershell
-cd D:\CodeSpaces\WuZi
-npm.cmd test
-```
-
-## 打包说明
-
-### 重新生成 exe 启动器
 
 ```powershell
 cd D:\CodeSpaces\WuZi
@@ -146,19 +115,8 @@ dist/WuZiLauncher/
 - `QuickStart.txt`
 - `QuickStart_EN.txt`
 
-### 重新生成发布压缩包
 
-```powershell
-cd D:\CodeSpaces\WuZi
-npm.cmd run package:release
-npm.cmd run package:macos
-```
 
-输出目录：
-
-```text
-release/
-```
 
 ## 技术结构
 
