@@ -12,7 +12,8 @@ $packageFiles = @(
   (Join-Path $distDir "WuZiLauncher.exe"),
   (Join-Path $distDir "Start-WuZi.bat"),
   (Join-Path $distDir "Stop-WuZi.bat"),
-  (Join-Path $distDir "QuickStart.txt")
+  (Join-Path $distDir "QuickStart.txt"),
+  (Join-Path $distDir "QuickStart_EN.txt")
 )
 
 & (Join-Path $projectRoot "scripts\publish-launcher.ps1")

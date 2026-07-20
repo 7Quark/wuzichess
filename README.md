@@ -1,5 +1,7 @@
 # 五子棋
 
+[English README](./README_EN.md)
+
 一个纯本地、可离线运行的五子棋应用，支持人人对战与人机对战，并提供 Windows 一键启动版本。
 
 ## 项目简介
@@ -127,6 +129,7 @@ dist/WuZiLauncher/
 - `Start-WuZi.bat`
 - `Stop-WuZi.bat`
 - `QuickStart.txt`
+- `QuickStart_EN.txt`
 
 ### 重新生成发布压缩包
 
@@ -185,6 +188,7 @@ dist/
     Start-WuZi.bat
     Stop-WuZi.bat
     QuickStart.txt
+    QuickStart_EN.txt
 launcher/
   netfx/
     WuZiLauncher.cs
@@ -206,6 +210,7 @@ tests/
 index.html
 package.json
 README.md
+README_EN.md
 启动五子棋.bat
 关闭五子棋.bat
 ```

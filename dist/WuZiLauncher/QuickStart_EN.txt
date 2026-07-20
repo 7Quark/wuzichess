@@ -1,0 +1,10 @@
+﻿WuZi Gomoku Windows Portable
+
+1. Double-click Start-WuZi.bat or WuZiLauncher.exe
+2. The launcher will open your browser automatically
+3. Double-click Stop-WuZi.bat to close the local server
+
+Notes:
+- No Node.js installation required
+- No Python installation required
+- Runtime logs are stored in the .runtime folder

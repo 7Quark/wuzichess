@@ -1,5 +1,7 @@
 # Gomoku
 
+[中文说明](./README.md)
+
 A fully local, offline-capable Gomoku application with both Human vs Human and Human vs AI modes, plus a one-click Windows launcher.
 
 ## Overview
@@ -127,6 +129,7 @@ Generated files:
 - `Start-WuZi.bat`
 - `Stop-WuZi.bat`
 - `QuickStart.txt`
+- `QuickStart_EN.txt`
 
 ### Rebuild the ZIP release package
 
@@ -185,6 +188,7 @@ dist/
     Start-WuZi.bat
     Stop-WuZi.bat
     QuickStart.txt
+    QuickStart_EN.txt
 launcher/
   netfx/
     WuZiLauncher.cs

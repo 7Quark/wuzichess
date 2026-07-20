@@ -46,7 +46,20 @@ if ($LASTEXITCODE -ne 0) {
 
 $startBat = "@echo off`r`nstart `"`" `"%~dp0WuZiLauncher.exe`"`r`n"
 $stopBat = "@echo off`r`n`"%~dp0WuZiLauncher.exe`" --stop`r`n"
-$quickStart = @'
+$quickStartCn = @'
+五子棋 Windows 便携版
+
+1. 双击 Start-WuZi.bat 或 WuZiLauncher.exe
+2. 启动器会自动打开浏览器
+3. 关闭时双击 Stop-WuZi.bat
+
+说明：
+- 不需要安装 Node.js
+- 不需要安装 Python
+- 运行日志保存在 .runtime 目录
+'@
+
+$quickStartEn = @'
 WuZi Gomoku Windows Portable
 
 1. Double-click Start-WuZi.bat or WuZiLauncher.exe
@@ -61,6 +74,7 @@ Notes:
 
 [System.IO.File]::WriteAllText((Join-Path $outputDir "Start-WuZi.bat"), $startBat, [System.Text.Encoding]::ASCII)
 [System.IO.File]::WriteAllText((Join-Path $outputDir "Stop-WuZi.bat"), $stopBat, [System.Text.Encoding]::ASCII)
-[System.IO.File]::WriteAllText((Join-Path $outputDir "QuickStart.txt"), $quickStart, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText((Join-Path $outputDir "QuickStart.txt"), $quickStartCn, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText((Join-Path $outputDir "QuickStart_EN.txt"), $quickStartEn, [System.Text.Encoding]::UTF8)
 
 Write-Host "Published launcher to: $outputDir"
