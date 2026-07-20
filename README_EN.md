@@ -94,49 +94,6 @@ Reason:
 - After extraction, users can directly double-click `WuZiLauncher.app`
 - Runtime logs are stored in `~/Library/Application Support/WuZiGomoku`
 
-## Developer Usage
-
-### Run the Web development version
-
-```powershell
-cd D:\CodeSpaces\WuZi
-npm.cmd start
-```
-
-Then open:
-
-```text
-http://127.0.0.1:8765/index.html
-```
-
-### Run the script-based launcher
-
-```powershell
-cd D:\CodeSpaces\WuZi
-powershell -ExecutionPolicy Bypass -File .\scripts\launch-wuzi.ps1
-```
-
-### Run automated tests
-
-```powershell
-cd D:\CodeSpaces\WuZi
-npm.cmd test
-```
-
-## Packaging
-
-### Rebuild the exe launcher
-
-```powershell
-cd D:\CodeSpaces\WuZi
-npm.cmd run publish:launcher
-```
-
-Output directory:
-
-```text
-dist/WuZiLauncher/
-```
 
 Generated files:
 
@@ -146,13 +103,7 @@ Generated files:
 - `QuickStart.txt`
 - `QuickStart_EN.txt`
 
-### Rebuild the ZIP release package
 
-```powershell
-cd D:\CodeSpaces\WuZi
-npm.cmd run package:release
-npm.cmd run package:macos
-```
 
 Output directory:
 
