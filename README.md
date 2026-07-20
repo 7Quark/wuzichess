@@ -73,6 +73,7 @@
 ```text
 release/WuZiLauncher-win-x64-v1.0.0.zip
 release/WuZiLauncher-macos-v1.0.0.zip
+release/WuZiLauncher-macos-v1.0.0.tar.gz
 ```
 
 解压后直接运行：
@@ -80,6 +81,17 @@ release/WuZiLauncher-macos-v1.0.0.zip
 ```text
 WuZiLauncher.exe
 ```
+
+macOS 推荐优先使用：
+
+```text
+WuZiLauncher-macos-v1.0.0.tar.gz
+```
+
+原因：
+
+- 更适合保留 `.app` 与脚本执行权限
+- 解压后可直接双击 `WuZiLauncher.app`
 
 ## 面向开发者的运行方式
 
@@ -197,6 +209,7 @@ launcher/
     WuZiLauncher.cs
 release/
   WuZiLauncher-macos-v1.0.0.zip
+  WuZiLauncher-macos-v1.0.0.tar.gz
   WuZiLauncher-win-x64-v1.0.0.zip
 scripts/
   dev-server.mjs
@@ -240,7 +253,7 @@ README_EN.md
 ## 说明
 
 1. 当前最适合 Windows 用户的版本是 `dist/WuZiLauncher/WuZiLauncher.exe`
-2. 当前最适合 macOS 用户的版本是 `release/WuZiLauncher-macos-v1.0.0.zip`
+2. 当前最适合 macOS 用户的版本是 `release/WuZiLauncher-macos-v1.0.0.tar.gz`
 3. 当前最适合开发调试的版本是 `npm.cmd start`
 4. 项目中保留了 Cocos 侧入口代码，但当前交付核心是本地 Web + 启动器方案
 

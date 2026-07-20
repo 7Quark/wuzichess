@@ -73,6 +73,7 @@ Release package:
 ```text
 release/WuZiLauncher-win-x64-v1.0.0.zip
 release/WuZiLauncher-macos-v1.0.0.zip
+release/WuZiLauncher-macos-v1.0.0.tar.gz
 ```
 
 After extraction, run:
@@ -80,6 +81,17 @@ After extraction, run:
 ```text
 WuZiLauncher.exe
 ```
+
+For macOS, the preferred package is:
+
+```text
+WuZiLauncher-macos-v1.0.0.tar.gz
+```
+
+Reason:
+
+- Better suited for preserving `.app` and script execute permissions
+- After extraction, users can directly double-click `WuZiLauncher.app`
 
 ## Developer Usage
 
@@ -197,6 +209,7 @@ launcher/
     WuZiLauncher.cs
 release/
   WuZiLauncher-macos-v1.0.0.zip
+  WuZiLauncher-macos-v1.0.0.tar.gz
   WuZiLauncher-win-x64-v1.0.0.zip
 scripts/
   dev-server.mjs
@@ -240,7 +253,7 @@ No need to install:
 ## Notes
 
 1. The recommended build for Windows users is `dist/WuZiLauncher/WuZiLauncher.exe`
-2. The recommended build for macOS users is `release/WuZiLauncher-macos-v1.0.0.zip`
+2. The recommended build for macOS users is `release/WuZiLauncher-macos-v1.0.0.tar.gz`
 3. The recommended build for development and debugging is `npm.cmd start`
 4. The repository still contains Cocos entry-point code, but the current delivered product is based on local Web runtime plus launcher-based distribution
 

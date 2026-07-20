@@ -2,16 +2,25 @@ $ErrorActionPreference = "Stop"
 
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $outputDir = Join-Path $projectRoot "dist\WuZiLauncher-macos"
-$runtimeDir = Join-Path $outputDir ".runtime-macos"
+$appBundleDir = Join-Path $outputDir "WuZiLauncher.app"
+$appContentsDir = Join-Path $appBundleDir "Contents"
+$appMacOsDir = Join-Path $appContentsDir "MacOS"
+$appResourcesDir = Join-Path $appContentsDir "Resources\app"
 $releaseDir = Join-Path $projectRoot "release"
 $packageJsonPath = Join-Path $projectRoot "package.json"
 $package = Get-Content $packageJsonPath -Raw | ConvertFrom-Json
 $version = $package.version
 $zipPath = Join-Path $releaseDir ("WuZiLauncher-macos-v{0}.zip" -f $version)
+$tarGzPath = Join-Path $releaseDir ("WuZiLauncher-macos-v{0}.tar.gz" -f $version)
+$pythonPackager = Join-Path $projectRoot "scripts\package-macos-tar.py"
+
+if (Test-Path $outputDir) {
+  Remove-Item $outputDir -Recurse -Force
+}
 
 New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
-New-Item -ItemType Directory -Force -Path $runtimeDir | Out-Null
-Get-ChildItem $runtimeDir -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force -Path $appMacOsDir | Out-Null
+New-Item -ItemType Directory -Force -Path $appResourcesDir | Out-Null
 
 $filesToCopy = @(
   "index.html",
@@ -28,74 +37,38 @@ $filesToCopy = @(
 
 foreach ($relativePath in $filesToCopy) {
   $sourcePath = Join-Path $projectRoot $relativePath
-  $targetPath = Join-Path $outputDir $relativePath
+  $targetPath = Join-Path $appResourcesDir $relativePath
   $targetParent = Split-Path $targetPath -Parent
   New-Item -ItemType Directory -Force -Path $targetParent | Out-Null
   Copy-Item $sourcePath $targetPath -Force
 }
 
-$startCommand = @'
-#!/usr/bin/env bash
-set -euo pipefail
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-bash "$SCRIPT_DIR/scripts/launch-wuzi-macos.sh"
-'@
-
-$stopCommand = @'
-#!/usr/bin/env bash
-set -euo pipefail
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-bash "$SCRIPT_DIR/scripts/stop-wuzi-macos.sh"
-'@
-
-$quickStartCn = @'
-五子棋 macOS 便携版
-
-1. 双击 Start-WuZi.command
-2. 首次运行如果被系统拦截，请在“系统设置 -> 隐私与安全性”中允许执行
-3. 程序会自动打开浏览器
-4. 关闭时双击 Stop-WuZi.command
-
-说明：
-- 需要 Node.js，或 Python 3
-- 运行日志保存在 .runtime-macos 目录
-'@
-
-$quickStartEn = @'
-WuZi Gomoku macOS Portable
-
-1. Double-click Start-WuZi.command
-2. If macOS blocks the first run, allow it in System Settings -> Privacy & Security
-3. The launcher will open your browser automatically
-4. Double-click Stop-WuZi.command to stop the local server
-
-Notes:
-- Requires Node.js or Python 3
-- Runtime logs are stored in the .runtime-macos folder
-'@
-
-[System.IO.File]::WriteAllText((Join-Path $outputDir "Start-WuZi.command"), $startCommand, [System.Text.Encoding]::UTF8)
-[System.IO.File]::WriteAllText((Join-Path $outputDir "Stop-WuZi.command"), $stopCommand, [System.Text.Encoding]::UTF8)
-[System.IO.File]::WriteAllText((Join-Path $outputDir "QuickStart.txt"), $quickStartCn, [System.Text.Encoding]::UTF8)
-[System.IO.File]::WriteAllText((Join-Path $outputDir "QuickStart_EN.txt"), $quickStartEn, [System.Text.Encoding]::UTF8)
+Copy-Item (Join-Path $projectRoot "launcher\macos\Info.plist") (Join-Path $appContentsDir "Info.plist") -Force
+Copy-Item (Join-Path $projectRoot "launcher\macos\WuZiLauncher") (Join-Path $appMacOsDir "WuZiLauncher") -Force
+Copy-Item (Join-Path $projectRoot "launcher\macos\Start-WuZi.command") (Join-Path $outputDir "Start-WuZi.command") -Force
+Copy-Item (Join-Path $projectRoot "launcher\macos\Stop-WuZi.command") (Join-Path $outputDir "Stop-WuZi.command") -Force
+Copy-Item (Join-Path $projectRoot "launcher\macos\QuickStart.txt") (Join-Path $outputDir "QuickStart.txt") -Force
+Copy-Item (Join-Path $projectRoot "launcher\macos\QuickStart_EN.txt") (Join-Path $outputDir "QuickStart_EN.txt") -Force
 
 if (Test-Path $zipPath) {
   Remove-Item $zipPath -Force
 }
 
+if (Test-Path $tarGzPath) {
+  Remove-Item $tarGzPath -Force
+}
+
 New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
 
 $packageFiles = @(
+  (Join-Path $outputDir "WuZiLauncher.app"),
   (Join-Path $outputDir "Start-WuZi.command"),
   (Join-Path $outputDir "Stop-WuZi.command"),
   (Join-Path $outputDir "QuickStart.txt"),
-  (Join-Path $outputDir "QuickStart_EN.txt"),
-  (Join-Path $outputDir "index.html"),
-  (Join-Path $outputDir "package.json"),
-  (Join-Path $outputDir "src"),
-  (Join-Path $outputDir "assets"),
-  (Join-Path $outputDir "scripts")
+  (Join-Path $outputDir "QuickStart_EN.txt")
 )
 
 Compress-Archive -Path $packageFiles -DestinationPath $zipPath -Force
+python $pythonPackager $outputDir $tarGzPath
 Write-Host "Published macOS package to: $zipPath"
+Write-Host "Published macOS package to: $tarGzPath"
