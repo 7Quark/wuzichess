@@ -3,8 +3,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-RUNTIME_DIR="$PROJECT_ROOT/.runtime-macos"
+RUNTIME_DIR="${HOME}/Library/Application Support/WuZiGomoku"
 STATE_FILE="$RUNTIME_DIR/launcher-state.txt"
+LOG_OUT_FILE="$RUNTIME_DIR/server.out.log"
+LOG_ERR_FILE="$RUNTIME_DIR/server.err.log"
 PORT_RANGE_START=8765
 PORT_RANGE_END=8775
 
@@ -37,6 +39,7 @@ if [[ -f "$STATE_FILE" ]]; then
       exit 0
     fi
   fi
+  rm -f "$STATE_FILE"
 fi
 
 PORT="$(find_free_port)"
@@ -48,10 +51,10 @@ fi
 URL="http://127.0.0.1:$PORT/index.html"
 
 if command -v node >/dev/null 2>&1; then
-  nohup env PORT="$PORT" node "$PROJECT_ROOT/scripts/dev-server.mjs" >"$RUNTIME_DIR/server.out.log" 2>"$RUNTIME_DIR/server.err.log" &
+  nohup env PORT="$PORT" node "$PROJECT_ROOT/scripts/dev-server.mjs" >"$LOG_OUT_FILE" 2>"$LOG_ERR_FILE" &
   PID=$!
 elif command -v python3 >/dev/null 2>&1; then
-  nohup python3 -m http.server "$PORT" --bind 127.0.0.1 >"$RUNTIME_DIR/server.out.log" 2>"$RUNTIME_DIR/server.err.log" &
+  nohup python3 -m http.server "$PORT" --bind 127.0.0.1 >"$LOG_OUT_FILE" 2>"$LOG_ERR_FILE" &
   PID=$!
 else
   echo "[WuZi] Node.js or Python 3 is required on macOS."

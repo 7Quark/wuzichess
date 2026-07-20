@@ -92,6 +92,7 @@ WuZiLauncher-macos-v1.0.0.tar.gz
 
 - 更适合保留 `.app` 与脚本执行权限
 - 解压后可直接双击 `WuZiLauncher.app`
+- 运行日志会写入 `~/Library/Application Support/WuZiGomoku`
 
 ## 面向开发者的运行方式
 

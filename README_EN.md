@@ -92,6 +92,7 @@ Reason:
 
 - Better suited for preserving `.app` and script execute permissions
 - After extraction, users can directly double-click `WuZiLauncher.app`
+- Runtime logs are stored in `~/Library/Application Support/WuZiGomoku`
 
 ## Developer Usage
 
