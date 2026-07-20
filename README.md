@@ -1,68 +1,134 @@
 # 五子棋
 
-这是一个纯本地单机五子棋项目，当前包含：
+一个纯本地、可离线运行的五子棋应用，支持人人对战与人机对战两种模式，并提供 Windows 一键启动版本。
 
+## 项目简介
+
+本项目基于五子棋开发需求文档实现，当前已经完成以下内容：
+
+- 本地单机运行，无需联网
+- 15 x 15 标准棋盘
 - 人人对战
 - 人机对战
-- 标准 15 x 15 棋盘
-- 胜负、和棋、悔棋、重置、退出
-- AI 识别活二、活三、冲四，并优先处理成五与必防点
+- 胜负判定
+- 和棋判定
+- 悔棋、重置、退出
+- Windows `exe` 启动器
+- 可直接分发的 ZIP 发布包
 
-## 给用户的一键运行方式
+## 主要功能
 
-最简单的方式：
+### 1. 人人对战
 
-- 双击 [启动五子棋.bat](/D:/CodeSpaces/WuZi/启动五子棋.bat)
+两位玩家在同一台设备上轮流落子，黑方先手，系统自动判断胜负和和棋。
 
-如果已经生成了桌面启动器，它会优先启动：
+### 2. 人机对战
 
-- [WuZiLauncher.exe](/D:/CodeSpaces/WuZi/dist/WuZiLauncher/WuZiLauncher.exe)
+玩家执黑先手，AI 执白后手。AI 具备基础攻防逻辑，不是随机落子。
 
-关闭时双击：
+当前 AI 支持：
 
-- [关闭五子棋.bat](/D:/CodeSpaces/WuZi/关闭五子棋.bat)
+- 优先寻找成五点
+- 优先拦截对手必胜点
+- 识别活二、活三、冲四等常见棋型
+- 在进攻与防守之间做基础权重判断
 
-`WuZiLauncher.exe` 的特点：
+### 3. 本地一键启动
 
-- 不依赖 `Node.js`
-- 不依赖 `Python`
-- 内置本地 HTTP 服务
-- 自动选择 `8765-8775` 的空闲端口
-- 自动打开浏览器
-- 支持单实例复用
-- 运行状态写入 `dist/WuZiLauncher/.runtime/`
+项目提供两种启动方式：
 
-## 开发者启动方式
+- 开发版：脚本启动
+- 发布版：`WuZiLauncher.exe` 启动
 
-直接运行 Web 开发版：
+发布版不依赖 `Node.js` 或 `Python`，适合直接发给用户使用。
+
+## 面向用户的使用方式
+
+### 方式一：直接运行 exe
+
+双击下面任意一个文件即可：
+
+- `dist/WuZiLauncher/WuZiLauncher.exe`
+- `dist/WuZiLauncher/Start-WuZi.bat`
+- 根目录 `启动五子棋.bat`
+
+程序启动后会：
+
+- 自动选择可用本地端口
+- 在后台启动本地服务
+- 自动打开浏览器进入游戏界面
+
+关闭方式：
+
+- 双击 `dist/WuZiLauncher/Stop-WuZi.bat`
+- 或双击根目录 `关闭五子棋.bat`
+
+### 方式二：使用发布压缩包
+
+发布包位置：
+
+```text
+release/WuZiLauncher-win-x64-v1.0.0.zip
+```
+
+解压后直接运行：
+
+```text
+WuZiLauncher.exe
+```
+
+## 面向开发者的运行方式
+
+### 1. 运行 Web 开发版
 
 ```powershell
 cd D:\CodeSpaces\WuZi
 npm.cmd start
 ```
 
-或者运行脚本版启动器：
+启动后访问：
+
+```text
+http://127.0.0.1:8765/index.html
+```
+
+### 2. 运行脚本版启动器
 
 ```powershell
+cd D:\CodeSpaces\WuZi
 powershell -ExecutionPolicy Bypass -File .\scripts\launch-wuzi.ps1
 ```
 
-## 构建 exe 启动器
+### 3. 运行自动化测试
 
-在项目根目录执行：
+```powershell
+cd D:\CodeSpaces\WuZi
+npm.cmd test
+```
+
+## 打包说明
+
+### 重新生成 exe 启动器
 
 ```powershell
 cd D:\CodeSpaces\WuZi
 npm.cmd run publish:launcher
 ```
 
-构建输出目录：
+输出目录：
 
 ```text
-dist\WuZiLauncher\
+dist/WuZiLauncher/
 ```
 
-生成可直接发送给用户的压缩包：
+包含文件：
+
+- `WuZiLauncher.exe`
+- `Start-WuZi.bat`
+- `Stop-WuZi.bat`
+- `QuickStart.txt`
+
+### 重新生成发布压缩包
 
 ```powershell
 cd D:\CodeSpaces\WuZi
@@ -72,69 +138,104 @@ npm.cmd run package:release
 输出目录：
 
 ```text
-release\
+release/
 ```
 
-当前实际使用的是：
+## 技术结构
 
-- `scripts/publish-launcher.ps1`
-- `launcher/netfx/WuZiLauncher.cs`
+### 前端界面
 
-这套构建基于 Windows 自带的 `.NET Framework csc.exe`，不依赖 NuGet 下载。
+- `index.html`：页面入口
+- `src/web/app.js`：界面交互、模式切换、棋盘渲染
+- `src/web/styles.css`：样式定义
 
-## 自动化测试
+### 核心逻辑
 
-```powershell
-cd D:\CodeSpaces\WuZi
-npm.cmd test
-```
+- `assets/scripts/core/gomoku-rules.js`：棋盘规则、合法落子、胜负判定
+- `assets/scripts/core/gomoku-engine.js`：对局状态机、模式控制、悔棋逻辑
+- `assets/scripts/core/gomoku-ai.js`：AI 选点与攻防评分
 
-## Cocos Creator 3.7.3
+### Windows 启动器
 
-项目中的 Cocos 入口位于 `assets/scripts/GomokuGame.ts`，FGUI 接入壳位于 `assets/scripts/FairyGuiShell.ts`。
+- `launcher/netfx/WuZiLauncher.cs`：Windows `exe` 启动器源码
+- `scripts/publish-launcher.ps1`：构建启动器
+- `scripts/package-release.ps1`：生成 ZIP 发布包
 
-使用 Cocos Creator 3.7.3 打开项目后：
+### Cocos 预留入口
 
-1. 创建一个场景。
-2. 创建空节点并挂载 `GomokuGame`。
-3. 创建棋盘容器节点并拖给 `boardRoot`。
-4. 如果已经接入 FairyGUI Cocos SDK，再把 `FairyGuiShell` 挂到场景根节点。
+- `assets/scripts/GomokuGame.ts`
+- `assets/scripts/FairyGuiShell.ts`
 
-当前仓库已经具备完整对局逻辑与 AI 模块；如果要做成完整 Cocos 成品工程，下一步主要是补齐场景资源、FGUI 导出包和交互绑定。
+这部分用于后续接入 `Cocos Creator 3.7.3` 和 `FairyGUI`，当前项目主体已经可独立运行，不依赖 Cocos 编辑器。
 
-## 目录
+## 目录结构
 
 ```text
-assets/scripts/
-  core/
-    gomoku-ai.js
-    gomoku-engine.js
-    gomoku-rules.js
-  FairyGuiShell.ts
-  GomokuGame.ts
+assets/
+  scripts/
+    core/
+      gomoku-ai.js
+      gomoku-engine.js
+      gomoku-rules.js
+    FairyGuiShell.ts
+    GomokuGame.ts
 dist/
   WuZiLauncher/
+    WuZiLauncher.exe
     Start-WuZi.bat
     Stop-WuZi.bat
     QuickStart.txt
-    WuZiLauncher.exe
 launcher/
   netfx/
     WuZiLauncher.cs
+release/
+  WuZiLauncher-win-x64-v1.0.0.zip
 scripts/
   dev-server.mjs
   launch-wuzi.ps1
-  package-release.ps1
-  publish-launcher.ps1
-  spawn-server.cjs
   stop-wuzi.ps1
+  publish-launcher.ps1
+  package-release.ps1
+  spawn-server.cjs
 src/
   web/
     app.js
     styles.css
-启动五子棋.bat
-关闭五子棋.bat
-index.html
 tests/
   gomoku.test.js
+index.html
+package.json
+README.md
+启动五子棋.bat
+关闭五子棋.bat
 ```
+
+## 运行要求
+
+### 发布版
+
+- Windows 系统
+- 浏览器可用
+
+不需要安装：
+
+- `Node.js`
+- `Python`
+
+### 开发版
+
+- Windows
+- Node.js
+
+## 说明
+
+1. 当前最适合普通用户的版本是 `dist/WuZiLauncher/WuZiLauncher.exe`
+2. 当前最适合开发调试的版本是 `npm.cmd start`
+3. 项目中保留了 Cocos 侧入口代码，但当前交付核心是本地 Web + Windows 启动器方案
+
+## 后续可扩展方向
+
+- 增强 AI 搜索深度和难度分级
+- 增加单窗口桌面版，而不是浏览器打开
+- 增加自定义应用图标和安装包
+- 接入完整 Cocos Creator 场景和 FairyGUI 资源
